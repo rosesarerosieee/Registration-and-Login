@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { db } from '../firebase/firebase';
 import {ref, onValue, push} from 'firebase/database';
+import './registration.css';
 
 const Registration = () => {
     
@@ -16,8 +17,9 @@ const Registration = () => {
     });
 
     const [allUser, setAllUser] = useState([]);
-    const [isRegister, setIsRegister] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
+    const [isRegisterVisible, setIsRegisterVisible] = useState(false);
+    const [isLoginVisible, setIsLoginVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         
@@ -56,7 +58,7 @@ const Registration = () => {
     };
 
     const handleRegisterSubmit = (e) => {
-
+        e.preventDefault();
         const taskRef = ref(db, 'registration');
         const {Name, Username, Password} = credentials;
         push(taskRef, {
@@ -74,44 +76,121 @@ const Registration = () => {
         })
         alert("Register Succesful!");
     };
- 
+
+    const handleLoginSubmit = (e) => {
+        e.preventDefault();
+        const {Username, Password} = loginCredentials;
+        const user = allUser.find(user => user.Username === Username && user.Password === Password);
+        if(user){
+        
+            alert('welcome');
+        } else{
+            alert('Invalid Username or Password');
+        }
+    }
+
+    
+    const isinLogin = () => {
+        setIsLoginVisible(prevIsLogin => !prevIsLogin);
+    };
+
+
     return(
         <>
         <div className='container'>
             <div className='card'>
-                <div className='register'>
+                <div className='label'>
+                    <span className='register-label' onClick={isinLogin}>Register</span>
+                </div>
+
+                <div className={`register`}>
                     <form onSubmit={handleRegisterSubmit}>
-                    <input
-                    type='text'
-                    name='Name'
-                    value={credentials.Name}
-                    placeholder='Input your name'
-                    required 
-                    onChange={handleChangeRegister}
-                    />
+
+                <div className='register-input'>
+                    <h3 className='register-label1'>Register</h3>
+                    <div className='name-input'>
+                        <input
+                        type='text'
+                        name='Name'
+                        value={credentials.Name}
+                        placeholder='Input your name'
+                        required 
+                        onChange={handleChangeRegister}
+                        />
                     
-                    <input 
-                    type='text'
-                    name='Username'
-                    value={credentials.Username}
-                    placeholder='Input Your username'
-                    required
-                    onChange={handleChangeRegister}
-                    />
+                    </div>
 
-                    <input
-                    type='password'
-                    name='Password'
-                    value={credentials.Password}
-                    placeholder='Input your password'
-                    required
-                    onChange={handleChangeRegister}
-                    />
+                    <div className='username-input'>
+                        <input 
+                        type='text'
+                        name='Username'
+                        value={credentials.Username}
+                        placeholder='Input Your username'
+                        required
+                        onChange={handleChangeRegister}
+                        />
+                    </div>
 
-                    <button type='submit'>Submit</button>
-                    </form>
+                    <div className='password-input'>
+                        <input
+                        type='password'
+                        name='Password'
+                        value={credentials.Password}
+                        placeholder='Input your password'
+                        required
+                        onChange={handleChangeRegister}
+                        />
+                    </div>
+
+                    <div className='register-submit'>
+                        <button type='submit'>Submit</button>
+                    </div>
 
                 </div>
+                    </form>
+               
+
+                </div>
+
+                <div className={`login ${!isLoginVisible ? 'loginVisible' : 'LoginNotVisble'}`}>
+
+                    <form onSubmit={handleLoginSubmit}>
+                        
+                <div className='login-input'>
+                    <div className='username-input'>
+                        <input 
+                        type = 'text'
+                        name='Username'
+                        value={loginCredentials.Username}
+                        onChange={handleChangeLogin}
+                        placeholder='Enter your Username'
+                        required
+                        />
+                    </div>
+
+                    <div className='password-input'>
+                        <input
+                        type='password'
+                        name='Password'
+                        value={loginCredentials.Password}
+                        onChange={handleChangeLogin}
+                        placeholder='Enter your Password'
+                        required
+                        />
+                    
+                    </div>
+                   
+                    <div className='login-button'>
+                        <button type='submit'>Login</button>
+                    </div>
+                </div>
+                    </form>
+                    
+                </div>
+                
+              <div className='label'>
+                <span className='login-label' onClick={isinLogin}>Login</span>
+              </div>
             </div>
         </div>
         </>
